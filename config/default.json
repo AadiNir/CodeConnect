@@ -1,4 +1,7 @@
 {
     "mongourl": "mongodb+srv://aadinir:Aamod123@cluster0.sszhzlo.mongodb.net/?retryWrites=true&w=majority",
-    "jwtSecret":"jwtsecretkey"
+    "jwtSecret":"jwtsecretkey",
+    "githubsecret":"feb677558078bcf8bf6390a13d51767a21467ba7",
+    "githubclient":"adc14a43956ed70b97de",
+    "gittoken":"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"
 }

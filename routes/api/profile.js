@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
+const axios = require('axios')
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+const config =require('config')
 const{check, validationResult}=require('express-validator');
 router.get('/me',auth,async (req,res)=>{
     try{
@@ -147,4 +149,65 @@ router.delete('/experience/:exp_id',auth,async(req,res)=>{
         res.status(400).json(err);
     }
 })
+router.post('/education',[auth,[check('school',"school column is required")]],async(req,res)=>{
+    const error= validationResult(req);
+    if(!error.isEmpty()){
+        res.status(400).json(error.array());
+    }
+    const{
+        school,
+        degree,
+        fieldofstudy,
+        from,
+        to,
+        current,
+        description
+    } = req.body;
+    let arr = {  school,
+        degree,
+        fieldofstudy,
+        from,
+        to,
+        current,
+        description};
+        try{
+            const profile = await Profile.findOne({user : req.user.id})
+            profile.education.unshift(arr);
+            await profile.save();
+            res.send(profile);
+
+        }catch(err){
+            res.status(400).json(err);
+        }
+
+})
+router.delete('/education/:edu_id',auth,async(req,res)=>{
+    try{
+    const profile = await Profile.findOne({user : req.user.id});
+    const rem = profile.education.map(item=>item.id).indexOf(req.params.edu_id);
+    await profile.education.splice(rem,1);
+    await profile.save();
+    res.json(profile);
+    }catch(err){
+        res.status(400).json(err);
+    }
+})
+router.get('/github/:username', async (req, res) => {
+    try {
+      const uri = encodeURI(
+        `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`
+      );
+      const headers = {
+        'user-agent': 'node.js',
+        Authorization: `token ${config.get('gittoken')}`
+      };
+  
+      const gitHubResponse = await axios.get(uri, { headers });
+      return res.json(gitHubResponse.data);
+    } catch (err) {
+      console.error(err.message);
+      return res.status(404).json({ msg: 'No Github profile found' });
+    }
+  });
+
 module.exports = router;
