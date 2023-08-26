@@ -2,9 +2,12 @@ const express = require('express');
 const env = require('dotenv');
 const connectdb = require('./config/db');
 env.config();
+const cors = require('cors');
 
 
 const app = express();
+app.use(cors());
+
 //middleware initalization basically using boyd parser to get the data from the body
 app.use(express.json({extended: false}));
 const PORT = process.env.port || 5000;
