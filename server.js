@@ -10,7 +10,7 @@ app.use(cors());
 
 //middleware initalization basically using boyd parser to get the data from the body
 app.use(express.json({extended: false}));
-const PORT = process.env.port || 5000;
+const PORT = process.env.port || 5001;
 app.get('/',(req,res)=>{
     res.send("hello world")
 })
